@@ -1,75 +1,92 @@
 // JavaScript Document
 $(document).ready(function () {
-    var x = "x"
-    var o = "o"
-    var count = 0;
-    var o_win = 0;
-    var x_win = 0;
-    $('#game li').click(function () {
+    const x = "x";
+    const o = "o";
+    let count = 0;
+    let winner = "";
+    const winCount = {
+        o: 0,
+        x: 0
+    }
+    const MAX_TILES = 9;
+    const MOVES_TO_WIN = 5;
 
-        if ($("#one").hasClass('o') && $("#two").hasClass('o') && $("#three").hasClass('o') || $("#four").hasClass('o') && $("#five").hasClass('o') && $("#six").hasClass('o') || $("#seven").hasClass('o') && $("#eight").hasClass('o') && $("#nine").hasClass('o') || $("#one").hasClass('o') && $("#four").hasClass('o') && $("#seven").hasClass('o') || $("#two").hasClass('o') && $("#five").hasClass('o') && $("#eight").hasClass('o') || $("#three").hasClass('o') && $("#six").hasClass('o') && $("#nine").hasClass('o') || $("#one").hasClass('o') && $("#five").hasClass('o') && $("#nine").hasClass('o') || $("#three").hasClass('o') && $("#five").hasClass('o') && $("#seven").hasClass('o')) {
-            alert('O has won the game. Start a new game')
-            $("#game li").text("+");
-            $("#game li").removeClass('disable')
-            $("#game li").removeClass('o')
-            $("#game li").removeClass('x')
-            $("#game li").removeClass('btn-primary')
-            $("#game li").removeClass('btn-info')
-        }
-        else if ($("#one").hasClass('x') && $("#two").hasClass('x') && $("#three").hasClass('x') || $("#four").hasClass('x') && $("#five").hasClass('x') && $("#six").hasClass('x') || $("#seven").hasClass('x') && $("#eight").hasClass('x') && $("#nine").hasClass('x') || $("#one").hasClass('x') && $("#four").hasClass('x') && $("#seven").hasClass('x') || $("#two").hasClass('x') && $("#five").hasClass('x') && $("#eight").hasClass('x') || $("#three").hasClass('x') && $("#six").hasClass('x') && $("#nine").hasClass('x') || $("#one").hasClass('x') && $("#five").hasClass('x') && $("#nine").hasClass('x') || $("#three").hasClass('x') && $("#five").hasClass('x') && $("#seven").hasClass('x')) {
-            alert('X wins has won the game. Start a new game')
-            $("#game li").text("+");
-            $("#game li").removeClass('disable')
-            $("#game li").removeClass('o')
-            $("#game li").removeClass('x')
-            $("#game li").removeClass('btn-primary')
-            $("#game li").removeClass('btn-info')
-        }
-        else if (count == 9) {
-            alert('Its a tie. It will restart.')
-            $("#game li").text("+");
-            $("#game li").removeClass('disable')
-            $("#game li").removeClass('o')
-            $("#game li").removeClass('x')
-            $("#game li").removeClass('btn-primary')
-            $("#game li").removeClass('btn-info')
-            count = 0
-        }
-        else if ($(this).hasClass('disable')) {
-            alert('Already selected')
-        }
-        else if (count % 2 == 0) {
-            count++
-            $(this).text(o)
-            $(this).addClass('disable o btn-primary')
-            if ($("#one").hasClass('o') && $("#two").hasClass('o') && $("#three").hasClass('o') || $("#four").hasClass('o') && $("#five").hasClass('o') && $("#six").hasClass('o') || $("#seven").hasClass('o') && $("#eight").hasClass('o') && $("#nine").hasClass('o') || $("#one").hasClass('o') && $("#four").hasClass('o') && $("#seven").hasClass('o') || $("#two").hasClass('o') && $("#five").hasClass('o') && $("#eight").hasClass('o') || $("#three").hasClass('o') && $("#six").hasClass('o') && $("#nine").hasClass('o') || $("#one").hasClass('o') && $("#five").hasClass('o') && $("#nine").hasClass('o') || $("#three").hasClass('o') && $("#five").hasClass('o') && $("#seven").hasClass('o')) {
-                alert('O wins')
-                count = 0
-                o_win++
-                $('#o_win').text(o_win)
-            }
-        }
-        else {
-            count++
-            $(this).text(x)
-            $(this).addClass('disable x btn-info')
-            if ($("#one").hasClass('x') && $("#two").hasClass('x') && $("#three").hasClass('x') || $("#four").hasClass('x') && $("#five").hasClass('x') && $("#six").hasClass('x') || $("#seven").hasClass('x') && $("#eight").hasClass('x') && $("#nine").hasClass('x') || $("#one").hasClass('x') && $("#four").hasClass('x') && $("#seven").hasClass('x') || $("#two").hasClass('x') && $("#five").hasClass('x') && $("#eight").hasClass('x') || $("#three").hasClass('x') && $("#six").hasClass('x') && $("#nine").hasClass('x') || $("#one").hasClass('x') && $("#five").hasClass('x') && $("#nine").hasClass('x') || $("#three").hasClass('x') && $("#five").hasClass('x') && $("#seven").hasClass('x')) {
-                alert('X wins')
-                count = 0
-                x_win++
-                $('#x_win').text(x_win)
-            }
-        }
-
-    });
-    $("#reset").click(function () {
+    function resetGame() {
         $("#game li").text("+");
-        $("#game li").removeClass('disable')
-        $("#game li").removeClass('o')
-        $("#game li").removeClass('x')
-        $("#game li").removeClass('btn-primary')
-        $("#game li").removeClass('btn-info')
-        count = 0
+        $("#game li").removeClass('disable o x btn-primary btn-info');
+        count = 0;
+        winner = "";
+    }
 
+    function isWinner(player, currentSelectedTileId) {
+        switch (currentSelectedTileId) {
+            case "one":
+                return $("#two").hasClass(player) && $("#three").hasClass(player) ||
+                    $("#four").hasClass(player) && $("#seven").hasClass(player) ||
+                    $("#five").hasClass(player) && $("#nine").hasClass(player);
+            case "two":
+                return $("#one").hasClass(player) && $("#three").hasClass(player) ||
+                    $("#five").hasClass(player) && $("#eight").hasClass(player);
+            case "three":
+                return $("#one").hasClass(player) && $("#two").hasClass(player) ||
+                    $("#six").hasClass(player) && $("#nine").hasClass(player) ||
+                    $("#five").hasClass(player) && $("#seven").hasClass(player);
+            case "four":
+                return $("#five").hasClass(player) && $("#six").hasClass(player) ||
+                    $("#one").hasClass(player) && $("#seven").hasClass(player);
+            case "five":
+                return $("#four").hasClass(player) && $("#six").hasClass(player) ||
+                    $("#two").hasClass(player) && $("#eight").hasClass(player) ||
+                    $("#one").hasClass(player) && $("#nine").hasClass(player) ||
+                    $("#three").hasClass(player) && $("#seven").hasClass(player);
+            case "six":
+                return $("#four").hasClass(player) && $("#five").hasClass(player) ||
+                    $("#three").hasClass(player) && $("#nine").hasClass(player);
+            case "seven":
+                return $("#eight").hasClass(player) && $("#nine").hasClass(player) ||
+                    $("#one").hasClass(player) && $("#four").hasClass(player) ||
+                    $("#three").hasClass(player) && $("#five").hasClass(player);
+            case "eight":
+                return $("#seven").hasClass(player) && $("#nine").hasClass(player) ||
+                    $("#two").hasClass(player) && $("#five").hasClass(player);
+            case "nine":
+                return $("#seven").hasClass(player) && $("#eight").hasClass(player) ||
+                    $("#three").hasClass(player) && $("#six").hasClass(player) ||
+                    $("#one").hasClass(player) && $("#five").hasClass(player);
+            default: return false;
+        }
+    }
+
+    $('#game li').click(function () {
+        if ($(this).hasClass('disable')) {
+            if (count == MAX_TILES) {
+                alert('Its a tie. It will restart.')
+                resetGame();
+            } else {
+                alert('Already selected');
+            }
+            return;
+        }
+
+        if (winner !== "") {
+            alert(`${winner.toUpperCase()} has won the game. Start a new game`);
+            resetGame();
+            return;
+        }
+
+        const currentPlayer = count % 2 == 0 ? o : x;
+        count++;
+
+        $(this).text(currentPlayer.toUpperCase());
+        $(this).addClass(`disable ${currentPlayer} ${currentPlayer === o ? "btn-primary" : "btn-info"}`);
+
+        if (count >= MOVES_TO_WIN && isWinner(currentPlayer, this.id)) {
+            winner = currentPlayer;
+            winCount[currentPlayer]++;
+            alert(`${currentPlayer.toUpperCase()} wins`);
+            $(`#${currentPlayer}_win`).text(winCount[currentPlayer]);
+        }
     });
+
+    $("#reset").click(resetGame);
 });
