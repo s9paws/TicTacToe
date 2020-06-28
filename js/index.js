@@ -58,6 +58,12 @@ $(document).ready(function () {
     }
 
     $('#game li').click(function () {
+        if (winner !== "") {
+            alert(`${winner.toUpperCase()} has won the game. Start a new game`);
+            resetGame();
+            return;
+        }
+
         if ($(this).hasClass('disable')) {
             if (count == MAX_TILES) {
                 alert('Its a tie. It will restart.')
@@ -65,12 +71,6 @@ $(document).ready(function () {
             } else {
                 alert('Already selected');
             }
-            return;
-        }
-
-        if (winner !== "") {
-            alert(`${winner.toUpperCase()} has won the game. Start a new game`);
-            resetGame();
             return;
         }
 
